@@ -1,0 +1,23 @@
+- name: Fetch Home Page
+  url: https://fetch.com/
+  method: GET
+  headers:
+    user-agent: fetch-synthetic-monitor
+
+- name: Fetch Careers Page
+  url: https://fetch.com/careers
+  method: GET
+  headers:
+    user-agent: fetch-synthetic-monitor
+
+- name: Submit Data
+  url: https://fetch.com/api/submit
+  method: POST
+  headers:
+    content-type: application/json
+    user-agent: fetch-synthetic-monitor
+  body: '{"username": "john_doe", "score": 100}'
+
+- name: Fetch Rewards Home Page
+  url: https://fetch.com/api/submit
+
