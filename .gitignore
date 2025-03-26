@@ -1,3 +1,11 @@
-venv/
+# Ignore system/environment data
+data/
+*.active
+*.db
+*.log
+*.pyc
 __pycache__/
 .DS_Store
+
+# Ignore venv if not needed
+venv/

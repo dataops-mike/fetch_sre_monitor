@@ -19,5 +19,7 @@
   body: '{"username": "john_doe", "score": 100}'
 
 - name: Fetch Rewards Home Page
-  url: https://fetch.com/api/submit
-
+  url: https://www.fetchrewards.com/
+  method: GET
+  headers:
+    user-agent: fetch-synthetic-monitor

@@ -7,6 +7,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, jsonify
 
+
 # Flask app for real-time monitoring dashboard
 app = Flask(__name__)
 domain_stats = defaultdict(lambda: {"up": 0, "total": 0})
