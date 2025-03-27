@@ -194,21 +194,6 @@ brew services stop prometheus
 
 ---
 
-## 🧹 .gitignore
-
-```gitignore
-venv/
-__pycache__/
-*.pyc
-*.db
-*.log
-data/
-.env
-.DS_Store
-```
-
----
-
 ## 👤 Author
 
 Michael Iheanacho  
