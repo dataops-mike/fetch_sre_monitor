@@ -34,7 +34,7 @@ This is a synthetic monitoring solution built from scratch for the Fetch SRE Tak
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/fetch_sre_monitor.git
+git clone git@github.com:dataops-mike/fetch_sre_monitor.git
 cd fetch_sre_monitor
 ```
 
