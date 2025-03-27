@@ -1,45 +1,215 @@
-# Fetch SRE Monitoring Tool
+# 🚦 Fetch SRE Monitoring Tool
 
-## 🧭 Overview
+This is a synthetic monitoring solution built from scratch for the Fetch SRE Take-Home Assessment. It monitors the health of defined HTTP endpoints, calculates domain-level availability and latency, and reports results in two ways:
 
-This project provides two scripts for monitoring HTTP endpoint health:
-
-1. **Console-based Monitor (`monitor.py`)**  
-   - Logs availability % and latency per domain to the terminal.
-2. **Prometheus + Grafana Monitor (`monitor_grafana.py`)**  
-   - Pushes metrics to Prometheus via Pushgateway and visualizes them in Grafana.
-
-Both scripts use a YAML configuration file and run health checks every 15 seconds.
+- ✅ Console-based logging (monitor.py)
+- 📊 Grafana dashboards via Prometheus + Pushgateway (monitor_grafana.py)
 
 ---
 
-## 🚀 Features
+## 📦 Project Structure
 
-### ✅ Console-Based Monitor (`monitor.py`)
-- Multi-threaded HTTP checks
-- Tracks domain-level availability %
-- Logs average latency per cycle
-- Clean and portable, no external services required
-
-### ✅ Prometheus + Grafana Monitor (`monitor_grafana.py`)
-- Pushes real-time metrics to Pushgateway
-- Monitored by Prometheus
-- Visualized in Grafana dashboards
-- Ideal for observability and alerting integrations
+| File                 | Description                                                              |
+|----------------------|--------------------------------------------------------------------------|
+| `monitor.py`         | Console-based SRE monitor that logs health data to terminal              |
+| `monitor_grafana.py` | Enhanced version that pushes metrics to Prometheus Pushgateway           |
+| `config.yaml`        | Defines endpoints to monitor                                             |
+| `requirements.txt`   | Python dependencies                                                      |
+| `.gitignore`         | Excludes virtualenv, data artifacts, and system files                    |
 
 ---
 
 ## ⚙️ Prerequisites
 
-Make sure you have these installed:
+- Python 3.7+
+- pip
+- Prometheus
+- Prometheus Pushgateway
+- Grafana
+- Homebrew (for macOS users)
 
-- **Python 3.x**
-- **pip** (comes with Python)
-- **Prometheus**
-- **Grafana**
-- **Prometheus Pushgateway**
+---
 
-You can install Prometheus/Grafana/Pushgateway via [Homebrew](https://brew.sh/) on macOS:
+## 🔧 Installation & Setup
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/fetch_sre_monitor.git
+cd fetch_sre_monitor
+```
+
+### 2. Create and Activate a Virtual Environment
+```bash
+python3 -m venv venv
+source venv/bin/activate  # For Mac/Linux
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🧾 Create `config.yaml`
+
+This file contains the endpoints to monitor:
+```yaml
+- name: Fetch Home Page
+  url: https://fetch.com/
+  method: GET
+  headers:
+    user-agent: fetch-synthetic-monitor
+
+- name: Fetch Careers Page
+  url: https://fetch.com/careers
+  method: GET
+  headers:
+    user-agent: fetch-synthetic-monitor
+
+- name: Submit Data
+  url: https://fetch.com/api/submit
+  method: POST
+  headers:
+    content-type: application/json
+    user-agent: fetch-synthetic-monitor
+  body: '{"username": "john_doe", "score": 100}'
+
+- name: Fetch Rewards Home Page
+  url: https://www.fetchrewards.com/
+  method: GET
+  headers:
+    user-agent: fetch-synthetic-monitor
+```
+
+---
+
+## ▶️ Run Console-Based Monitor
+
+```bash
+python monitor.py config.yaml
+```
+
+Every 15 seconds, it logs:
+- UP/DOWN per endpoint
+- Latency (ms)
+- Domain availability %
+
+---
+
+## ▶️ Run Prometheus + Grafana Monitor
+
+### 1. Install Monitoring Tools (macOS via Homebrew)
 ```bash
 brew install prometheus grafana
 brew install --no-quarantine prometheus-pushgateway
+```
+
+### 2. Configure Prometheus
+Edit `/usr/local/etc/prometheus.yml`:
+```yaml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'pushgateway'
+    static_configs:
+      - targets: ['localhost:9091']
+```
+
+Restart Prometheus:
+```bash
+brew services restart prometheus
+```
+
+### 3. Start Services
+```bash
+pushgateway
+brew services start prometheus
+brew services start grafana
+```
+
+### 4. Reset Grafana Password (Optional)
+```bash
+grafana-cli admin reset-admin-password Handsom31! --homepath /usr/local/opt/grafana/share/grafana
+```
+
+Login: [http://localhost:3000](http://localhost:3000)
+
+---
+
+### 5. Run the Monitor
+```bash
+python monitor_grafana.py config.yaml
+```
+
+Pushes:
+- `availability_percentage{exported_job="fetch.com"}`
+- `response_latency_ms{exported_job="fetch.com"}`
+
+---
+
+## 📊 Grafana Setup
+
+### Step 1: Add Prometheus as a Data Source
+- URL: `http://localhost:9090`
+
+### Step 2: Create Dashboard Panels
+
+**Availability:**
+```promql
+availability_percentage{exported_job="fetch.com"}
+```
+
+**Latency:**
+```promql
+response_latency_ms{exported_job="fetch.com"}
+```
+
+Repeat for `www.fetchrewards.com`.
+
+**Set Gauge Thresholds:**
+- Red: < 85
+- Green: ≥ 85
+
+---
+
+## ✅ Stopping Services
+```bash
+brew services stop grafana
+brew services stop prometheus
+# CTRL+C to stop Pushgateway
+```
+
+---
+
+## 🛠 Troubleshooting
+
+| Problem | Fix |
+|--------|-----|
+| Grafana login fails | Use grafana-cli with --homepath |
+| No metrics in panel | Check Prometheus scrape + query labels |
+| Prometheus not scraping | Ensure pushgateway target in prometheus.yml |
+| “No data” in panel | Adjust time range to "Last 5 minutes" |
+
+---
+
+## 🧹 .gitignore
+
+```gitignore
+venv/
+__pycache__/
+*.pyc
+*.db
+*.log
+data/
+.env
+.DS_Store
+```
+
+---
+
+## 👤 Author
+
+Michael Iheanacho  
+Built for Fetch SRE Take-Home Assessment
