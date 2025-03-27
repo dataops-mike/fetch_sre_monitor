@@ -131,7 +131,7 @@ brew services start grafana
 
 ### 4. Reset Grafana Password (Optional)
 ```bash
-grafana-cli admin reset-admin-password Handsom31! --homepath /usr/local/opt/grafana/share/grafana
+grafana-cli admin reset-admin-password <your-secure-password> --homepath /usr/local/opt/grafana/share/grafana
 ```
 
 Login: [http://localhost:3000](http://localhost:3000)
